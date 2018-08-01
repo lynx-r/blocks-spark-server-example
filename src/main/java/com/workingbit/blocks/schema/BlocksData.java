@@ -1,5 +1,6 @@
 package com.workingbit.blocks.schema;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.Block;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
@@ -24,7 +25,7 @@ class BlocksData {
   private static MongoCollection<Document> collection = db.getCollection("blocks");
   static DataFetcher blockFetcher = environment -> {
     List<Map<String, Object>> blocks = new ArrayList<>();
-    FindIterable<Document> iterable = collection.find();
+    FindIterable<Document> iterable = collection.find().sort(new BasicDBObject("_id", -1));
     iterable.forEach((Block<Document>) document -> blocks.add(converter(document)));
     return blocks;
   };
@@ -94,20 +95,20 @@ class BlocksData {
 //    };
   static DataFetcher saveFetcher = environment -> {
     String id = (String) environment.getArguments().get("id");
-    String title = (String) environment.getArguments().get("title");
-    List<Map<String, Object>> todos = new ArrayList<>();
+    String data = (String) environment.getArguments().get("data");
+    List<Map<String, Object>> blocks = new ArrayList<>();
     FindIterable<Document> iterable = collection.find(
         new Document("_id", new ObjectId(id))
     );
     iterable.forEach((Block<Document>) document -> {
-      document.append("title", title);
+      document.append("data", data);
       collection.updateOne(
           new Document("_id", new ObjectId(id)),
           new Document("$set", document)
       );
-      todos.add(converter(document));
+      blocks.add(converter(document));
     });
-    return todos.get(0);
+    return blocks.get(0);
   };
 
 //    static DataFetcher clearCompletedFetcher = new DataFetcher() {

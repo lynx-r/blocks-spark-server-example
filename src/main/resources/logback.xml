@@ -8,6 +8,7 @@
     </appender>
 
     <logger name="com.workingbit" level="DEBUG"/>
+    <logger name="com.graphql-java" level="DEBUG"/>
 
     <root level="error">
         <appender-ref ref="STDOUT"/>

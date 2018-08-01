@@ -1,14 +1,16 @@
 package com.workingbit.blocks.controller;
 
-import com.mongodb.BasicDBObject;
 import com.workingbit.blocks.schema.BlockSchema;
 import com.workingbit.blocks.schema.GraphqlQuery;
 import graphql.ExecutionInput;
 import graphql.GraphQL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import spark.Route;
 
 import java.util.Map;
 
+import static com.workingbit.blocks.util.JsonUtils.dataToJson;
 import static com.workingbit.blocks.util.JsonUtils.jsonToData;
 import static graphql.GraphQL.newGraphQL;
 
@@ -17,20 +19,21 @@ import static graphql.GraphQL.newGraphQL;
  */
 public class GraphqlController {
 
+  private static Logger LOG = LoggerFactory.getLogger(GraphqlController.class);
+
   public static Route graphql = (req, res) -> {
-    System.out.print("REQUEST: ");
-    System.out.println(req.body());
+    LOG.debug("req: " + req.body());
     GraphqlQuery graphqlQuery = jsonToData(req.body(), GraphqlQuery.class);
     GraphQL.Builder graphql = newGraphQL(BlockSchema.schema);
-    res.type("application/json");
     ExecutionInput executionInput = ExecutionInput.newExecutionInput()
         .operationName(graphqlQuery.getOperationName())
         .variables(graphqlQuery.getVariables())
         .query(graphqlQuery.getQuery())
         .build();
-    Map data = graphql.build().execute(executionInput).getData();
-//      Map data = graphql.build().execute(req.body()).getData();
-    System.out.println(data);
-    return new BasicDBObject(data).toJson();
+
+    Map data = graphql.build().execute(executionInput).toSpecification();
+    String json = dataToJson(data);
+    LOG.debug("res: " + json);
+    return json;
   };
 }
