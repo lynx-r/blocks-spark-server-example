@@ -1,0 +1,6 @@
+app:
+  port: 4567
+  mongoUrl: mongodb://example:example@ds047355.mongolab.com:27017/blocks-list-graphql
+  headers: content-type
+  methods: GET,POST,PUT,OPTIONS,HEADER,DELETE
+  origin: http://localhost:4200
