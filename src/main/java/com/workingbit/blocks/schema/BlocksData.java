@@ -12,7 +12,6 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,16 +24,18 @@ class BlocksData {
   private static MongoCollection<Document> collection = db.getCollection("blocks");
   static DataFetcher blockFetcher = environment -> {
     List<Map<String, Object>> blocks = new ArrayList<>();
-    FindIterable<Document> iterable = collection.find().sort(new BasicDBObject("_id", -1));
+    FindIterable<Document> iterable = collection.find().sort(new BasicDBObject("order", -1));
     iterable.forEach((Block<Document>) document -> blocks.add(converter(document)));
     return blocks;
   };
   static DataFetcher addFetcher = environment -> {
     Object type = environment.getArguments().get("type");
     Object data = environment.getArguments().get("data");
+    Object order = environment.getArguments().get("order");
     Document newBlock = new Document()
         .append("type", type)
-        .append("data", data);
+        .append("data", data)
+        .append("order", order);
     collection.insertOne(newBlock);
     return converter(newBlock);
   };
@@ -96,12 +97,14 @@ class BlocksData {
   static DataFetcher saveFetcher = environment -> {
     String id = (String) environment.getArguments().get("id");
     String data = (String) environment.getArguments().get("data");
+    Integer order = (Integer) environment.getArguments().get("order");
     List<Map<String, Object>> blocks = new ArrayList<>();
     FindIterable<Document> iterable = collection.find(
         new Document("_id", new ObjectId(id))
     );
     iterable.forEach((Block<Document>) document -> {
       document.append("data", data);
+      document.append("order", order);
       collection.updateOne(
           new Document("_id", new ObjectId(id)),
           new Document("$set", document)
@@ -109,6 +112,26 @@ class BlocksData {
       blocks.add(converter(document));
     });
     return blocks.get(0);
+  };
+  static DataFetcher batchSaveFetcher = environment -> {
+    List blocksIn = (List) environment.getArguments().get("blocks");
+    blocksIn.forEach(System.out::println);
+//    Bson filter = new Document();
+//    collection.updateMany(filter, blocksIn);
+//    List<Map<String, Object>> blocks = new ArrayList<>();
+//    FindIterable<Document> iterable = collection.find(
+//        new Document("_id", new ObjectId(id))
+//    );
+//    iterable.forEach((Block<Document>) document -> {
+//      document.append("data", data);
+//      document.append("order", order);
+//      collection.updateOne(
+//          new Document("_id", new ObjectId(id)),
+//          new Document("$set", document)
+//      );
+//      blocks.add(converter(document));
+//    });
+    return new ArrayList<>();
   };
 
 //    static DataFetcher clearCompletedFetcher = new DataFetcher() {
@@ -132,10 +155,11 @@ class BlocksData {
 //    };
 
   private static Map<String, Object> converter(Document document) {
-    return new HashMap<>() {{
-      put("id", document.get("_id"));
-      put("type", document.get("type"));
-      put("data", document.get("data"));
-    }};
+    return Map.of(
+        "id", document.get("_id"),
+        "type", document.get("type"),
+        "data", document.get("data"),
+        "order", document.get("order")
+    );
   }
 }

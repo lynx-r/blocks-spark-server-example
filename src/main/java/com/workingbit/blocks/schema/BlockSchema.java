@@ -1,19 +1,19 @@
 package com.workingbit.blocks.schema;
 
-import graphql.schema.GraphQLList;
-import graphql.schema.GraphQLNonNull;
-import graphql.schema.GraphQLObjectType;
-import graphql.schema.GraphQLSchema;
+import graphql.schema.*;
 
+import static graphql.Scalars.GraphQLInt;
 import static graphql.Scalars.GraphQLString;
 import static graphql.schema.GraphQLArgument.newArgument;
 import static graphql.schema.GraphQLFieldDefinition.newFieldDefinition;
+import static graphql.schema.GraphQLInputObjectField.newInputObjectField;
+import static graphql.schema.GraphQLInputObjectType.newInputObject;
 import static graphql.schema.GraphQLObjectType.newObject;
 
 public class BlockSchema {
 
-  private static GraphQLObjectType blockText = newObject()
-      .name("blockText")
+  private static GraphQLObjectType blockData = newObject()
+      .name("blockData")
       .field(newFieldDefinition()
           .type(GraphQLString)
           .name("id")
@@ -29,12 +29,41 @@ public class BlockSchema {
           .name("data")
           .description("Строка данных")
           .build())
+      .field(newFieldDefinition()
+          .type(GraphQLInt)
+          .name("order")
+          .description("Порядковый номер")
+          .build())
+      .build();
+
+  private static GraphQLInputObjectType blockDataInput = newInputObject()
+      .name("blockDataInput")
+      .field(newInputObjectField()
+          .type(GraphQLString)
+          .name("id")
+          .description("Id текстового блока")
+          .build())
+      .field(newInputObjectField()
+          .type(GraphQLString)
+          .name("type")
+          .description("Тип блока")
+          .build())
+      .field(newInputObjectField()
+          .type(GraphQLString)
+          .name("data")
+          .description("Строка данных")
+          .build())
+      .field(newInputObjectField()
+          .type(GraphQLInt)
+          .name("order")
+          .description("Порядковый номер")
+          .build())
       .build();
 
   private static GraphQLObjectType queryType = newObject()
       .name("Block")
       .field(newFieldDefinition()
-          .type(new GraphQLList(blockText))
+          .type(new GraphQLList(blockData))
           .name("blocks")
           .description("Блоки")
           .dataFetcher(BlocksData.blockFetcher)
@@ -44,7 +73,7 @@ public class BlockSchema {
   private static GraphQLObjectType mutationType = newObject()
       .name("Blocks")
       .field(newFieldDefinition()
-          .type(blockText)
+          .type(blockData)
           .name("add")
           .description("Добавить блок")
           .argument(newArgument()
@@ -57,11 +86,16 @@ public class BlockSchema {
               .description("Данные блока")
               .type(new GraphQLNonNull(GraphQLString))
               .build())
+          .argument(newArgument()
+              .name("order")
+              .description("Порядковый номер")
+              .type(new GraphQLNonNull(GraphQLInt))
+              .build())
           .dataFetcher(BlocksData.addFetcher)
           .build())
 
 //        .field(newFieldDefinition()
-//            .type(blockText)
+//            .type(blockData)
 //            .name("toggle")
 //            .description("toggle the todo")
 //            .argument(newArgument()
@@ -73,7 +107,7 @@ public class BlockSchema {
 //            .build())
 //
 //        .field(newFieldDefinition()
-//            .type(new GraphQLList(blockText))
+//            .type(new GraphQLList(blockData))
 //            .name("toggleAll")
 //            .description("toggle all todos")
 //            .argument(newArgument()
@@ -85,7 +119,7 @@ public class BlockSchema {
 //            .build())
 
       .field(newFieldDefinition()
-          .type(blockText)
+          .type(blockData)
           .name("destroy")
           .description("Удалить блок")
           .argument(newArgument()
@@ -97,14 +131,14 @@ public class BlockSchema {
           .build())
 
 //        .field(newFieldDefinition()
-//            .type(new GraphQLList(blockText))
+//            .type(new GraphQLList(blockData))
 //            .name("clearCompleted")
 //            .description("clear all completed todos")
 //            .dataFetcher(TodoData.clearCompletedFetcher)
 //            .build())
 
       .field(newFieldDefinition()
-          .type(blockText)
+          .type(blockData)
           .name("save")
           .description("Сохранить блок")
           .argument(newArgument()
@@ -117,7 +151,24 @@ public class BlockSchema {
               .description("Данные блока")
               .type(new GraphQLNonNull(GraphQLString))
               .build())
+          .argument(newArgument()
+              .name("order")
+              .description("Порядковый номер")
+              .type(new GraphQLNonNull(GraphQLInt))
+              .build())
           .dataFetcher(BlocksData.saveFetcher)
+          .build())
+
+      .field(newFieldDefinition()
+          .type(GraphQLList.list(blockDataInput))
+          .name("batchSave")
+          .description("Сохранить блоков")
+          .argument(newArgument()
+              .name("blocks")
+              .description("Список для сохранения")
+              .type(new GraphQLList(blockDataInput))
+              .build())
+          .dataFetcher(BlocksData.batchSaveFetcher)
           .build())
 
       .build();

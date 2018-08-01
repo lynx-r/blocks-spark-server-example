@@ -1,6 +1,6 @@
 app:
   port: 4567
-  mongoUrl: mongodb://localhost:27017/blocks-list-graphql
+  mongoUrl: mongodb://localhost:27017/blocks-graphql
   headers: content-type
   methods: GET,POST,PUT,OPTIONS,HEADER,DELETE
   origin: http://localhost:4200
