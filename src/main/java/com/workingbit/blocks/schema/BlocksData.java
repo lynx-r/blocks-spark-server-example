@@ -20,7 +20,7 @@ import static com.workingbit.blocks.Application.appProperties;
 class BlocksData {
   private static MongoClientURI uri = new MongoClientURI(appProperties.mongoUrl());
   private static MongoClient mongoClient = new MongoClient(uri);
-  private static MongoDatabase db = mongoClient.getDatabase("blocks-graphql");
+  private static MongoDatabase db = mongoClient.getDatabase("heroku_9k30h424");
   private static MongoCollection<Document> collection = db.getCollection("blocks");
   static DataFetcher blockFetcher = environment -> {
     List<Map<String, Object>> blocks = new ArrayList<>();
