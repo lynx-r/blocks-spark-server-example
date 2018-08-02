@@ -1,6 +1,6 @@
 app:
   port: 443 # not used
-  mongoUrl: mongodb://heroku_9k30h424:M5:Hfub9[:%F?Wg?ih[qjYnu$_EB@ds163781.mlab.com:63781/heroku_9k30h424
+  mongoUrl: mongodb://heroku_9k30h424:kb46g9umhk3tvv5ji1qp2bk0r1@ds163781.mlab.com:63781/heroku_9k30h424
   headers: content-type
   methods: GET,POST,PUT,OPTIONS,HEADER,DELETE
   origin: https://lynx-r.github.io
