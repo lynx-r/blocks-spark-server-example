@@ -50,3 +50,6 @@ task launch(type:JavaExec) {
 task wrapper(type: Wrapper) {
     gradleVersion = '4.8'
 }
+
+task stage(dependsOn: ['build', 'clean'])
+build.mustRunAfter clean
