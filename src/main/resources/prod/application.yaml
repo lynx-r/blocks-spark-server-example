@@ -1,0 +1,6 @@
+app:
+  port: 80
+  mongoUrl: mongodb://heroku_9k30h424:M5:Hfub9[:%F?Wg?ih[qjYnu$_EB@ds163781.mlab.com:63781/heroku_9k30h424
+  headers: content-type
+  methods: GET,POST,PUT,OPTIONS,HEADER,DELETE
+  origin: https://lynx-r.github.io/
