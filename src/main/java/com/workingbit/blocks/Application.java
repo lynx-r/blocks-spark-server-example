@@ -22,7 +22,7 @@ public class Application {
   }
 
   public static void main(String[] args) {
-    port(appProperties.port());
+    port(getPort());
     start();
   }
 
@@ -38,5 +38,13 @@ public class Application {
 
   private static void establishRoutes() {
     post("/graphql", GraphqlController.graphql);
+  }
+
+  private static int getPort() {
+    ProcessBuilder processBuilder = new ProcessBuilder();
+    if (processBuilder.environment().get("PORT") != null) {
+      return Integer.parseInt(processBuilder.environment().get("PORT"));
+    }
+    return appProperties.port();
   }
 }
