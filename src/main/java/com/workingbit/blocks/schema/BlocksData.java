@@ -41,13 +41,13 @@ class BlocksData {
   };
   static DataFetcher destroyFetcher = environment -> {
     String id = (String) environment.getArguments().get("id");
-    List<Map<String, Object>> todos = new ArrayList<>();
+    List<Map<String, Object>> blocks = new ArrayList<>();
     FindIterable<Document> iterable = collection.find(
         new Document("_id", new ObjectId(id))
     );
-    iterable.forEach((Block<Document>) document -> todos.add(converter(document)));
+    iterable.forEach((Block<Document>) document -> blocks.add(converter(document)));
     collection.deleteOne(new Document("_id", new ObjectId(id)));
-    return todos.get(0);
+    return blocks.get(0);
   };
 
 //    static DataFetcher toggleFetcher = new DataFetcher() {
