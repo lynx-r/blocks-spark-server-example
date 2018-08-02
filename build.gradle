@@ -2,12 +2,15 @@ plugins {
     id 'java'
     id 'idea'
     id 'maven'
+    id 'application'
 }
 
 group 'com.workingbit'
 version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.10
+
+mainClassName = "com.workingbit.blocks.Application"
 
 repositories {
     mavenCentral()
@@ -51,5 +54,6 @@ task wrapper(type: Wrapper) {
     gradleVersion = '4.8'
 }
 
-task stage(dependsOn: ['build', 'clean'])
-build.mustRunAfter clean
+task stage {
+    dependsOn installDist
+}
